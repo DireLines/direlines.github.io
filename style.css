@@ -29,7 +29,7 @@ body{
     color: #AAA;
     font-size: 28px;
     padding:10px;
-    text-align:justify;
+    text-align:left;
 }
 #navbar a:link {
     color: #BBB;
