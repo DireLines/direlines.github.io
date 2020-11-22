@@ -29,7 +29,7 @@ body{
     color: #AAA;
     font-size: 28px;
     padding:10px;
-    text-align:center;
+    text-align:justify;
 }
 #navbar a:link {
     color: #BBB;
@@ -74,6 +74,12 @@ figcaption{
     font-size: 55px;
     text-align: center;
     padding:20px;
+}
+
+.subtitle{
+    font-family: CMU Serif;
+    font-size: 20px;
+    font-style: italic;
 }
 
 .text{
