@@ -14,7 +14,9 @@ body{
     color:#DDD;
     background-color: #334;
     font-family: CMU Serif;
+    font-size:18px;
 }
+
 #navbar{
     position: absolute;
     top: 0;
@@ -27,7 +29,6 @@ body{
     padding:10px;
     text-align:center;
 }
-
 #navbar a:link {
     color: #BBB;
     text-decoration: none;
@@ -38,10 +39,10 @@ body{
 }
 #navbar a:hover {
     color: #FFF;
-    text-decoration: underline;
+    text-decoration: none;
 }
 #navbar a:active {
-    color: #333;
+    color: #FFF;
     text-decoration: underline;
 }
 
@@ -98,13 +99,17 @@ pre code{
 
 a:link {
     color: #6DF;
+    text-decoration: none;
 }
 a:visited {
     color: #C8F;
+    text-decoration: none;
 }
 a:hover {
     color: #FFF;
+    text-decoration: none;
 }
 a:active {
-    color: #333;
+    color: #FFF;
+    text-decoration: underline;
 }
