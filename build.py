@@ -22,7 +22,7 @@ template = template_file.read()
 template_file.close()
 content_marker = "CONTENT SHOULD BE HERE"
 
-input_dir = "blog-content" #this folder is gitignored so that I can keep it separate and private
+input_dir = "blog-content/visible" #this folder is gitignored so that I can keep it separate and private
 output_dir = "posts"
 if not os.path.exists(input_dir):
     print(input_dir, "doesn't exist")
