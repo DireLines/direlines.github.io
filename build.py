@@ -23,7 +23,7 @@ template_file.close()
 content_marker = "CONTENT SHOULD BE HERE"
 
 input_dir = "blog-content/visible" #this folder is gitignored so that I can keep it separate and private
-output_dir = "posts"
+output_dir = "."
 if not os.path.exists(input_dir):
     print(input_dir, "doesn't exist")
     exit()
@@ -31,11 +31,9 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 special_cases = {
-    "posts/index.html":"index.html",
-    "posts/posts.html":"posts.html",
-    "posts/about.html":"about.html",
-    "posts/contact.html":"contact.html",
+    #eg "path/to/file.html": "the/actual/url.html"
 }
+
 content_filenames = all_files_of_types(['html'], input_dir)
 for content_filename in content_filenames:
     with open(content_filename, 'r') as content_file:
@@ -44,7 +42,7 @@ for content_filename in content_filenames:
         if(output_filename in special_cases):
             output_filename = special_cases[output_filename]
         out_dir = os.path.dirname(output_filename)
-        if out_dir != '' and not os.path.exists(out_dir):
+        if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         with open(output_filename, 'w') as output_file:
             page_data = deepcopy(template).replace(content_marker,content)
