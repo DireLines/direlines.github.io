@@ -22,7 +22,7 @@ template = template_file.read()
 template_file.close()
 content_marker = "CONTENT SHOULD BE HERE"
 
-input_dir = "blog-content/visible" #this folder is gitignored so that I can keep it separate and private
+input_dir = "blog-content" #this folder is gitignored so that I can keep it separate and private
 output_dir = "."
 if not os.path.exists(input_dir):
     print(input_dir, "doesn't exist")
@@ -33,11 +33,14 @@ if not os.path.exists(output_dir):
 special_cases = {
     #eg "path/to/file.html": "the/actual/url.html"
 }
+skip_marker = "<!-- SKIP -->"
 
 content_filenames = all_files_of_types(['html'], input_dir)
 for content_filename in content_filenames:
     with open(content_filename, 'r') as content_file:
         content = content_file.read()
+        if skip_marker in content:
+            continue
         output_filename = str(content_filename).replace(input_dir,output_dir,1)
         if(output_filename in special_cases):
             output_filename = special_cases[output_filename]
