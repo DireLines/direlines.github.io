@@ -35,7 +35,7 @@ if not os.path.exists(output_dir):
 special_cases = {
     #eg "path/to/file.html": "the/actual/url.html"
 }
-skip_marker = "<!-- SKIP -->"
+skip_marker = "SKIP"
 title_marker = "PAGE TITLE"
 
 content_filenames = all_files_of_types(['html'], input_dir)
@@ -58,6 +58,6 @@ for content_filename in content_filenames:
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         with open(output_filename, 'w') as output_file:
-            page_data = deepcopy(template).replace(content_marker,content).replace(title_marker, title)
+            page_data = deepcopy(template).replace(title_marker, title).replace(content_marker,content)
             output_file.write(page_data)
         print(output_filename)
