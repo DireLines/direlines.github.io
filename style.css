@@ -78,6 +78,7 @@ figcaption{
     font-size: 20px;
     font-style: italic;
     text-align: center;
+    padding:10px;
 }
 
 .text{
@@ -87,6 +88,7 @@ figcaption{
 }
 
 blockquote pre{
+    font-family: CMU Serif;
     font-style: italic;
 }
 
