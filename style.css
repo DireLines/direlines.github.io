@@ -10,13 +10,16 @@
     src: url(fonts/Inconsolata.ttf);
 }
 
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 body{
     color:#DDD;
     background-color: #334;
     font-family: CMU Serif;
     font-size:18px;
-    max-width: 100%;
-    overflow-x: hidden;
 }
 
 #navbar{
@@ -49,7 +52,7 @@ body{
 
 #content{
     margin:50px auto;
-    max-width:700px;
+    max-width:800px;
     line-height:1.6;
     font-size:18px;
     padding:10px;
@@ -81,10 +84,22 @@ figcaption{
     padding:10px;
 }
 
+.date{
+    font-size: 20px;
+    padding:10px;
+}
+
 .text{
     font-size:18px;
     color:#DDD;
     text-align: left;
+}
+
+iframe {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }
 
 blockquote pre{

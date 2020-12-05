@@ -51,7 +51,7 @@ for content_filename in content_filenames:
             title_end = content.find('<',title_begin+1)
             page_title = content[title_begin+1:title_end]
             if page_title != '':
-                title = page_title + " - " + title
+                title = page_title + " | " + title
         output_filename = str(content_filename).replace(input_dir,output_dir,1)
         if(output_filename in special_cases):
             output_filename = special_cases[output_filename]
