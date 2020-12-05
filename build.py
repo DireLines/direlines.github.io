@@ -36,7 +36,8 @@ special_cases = {
     #eg "path/to/file.html": "the/actual/url.html"
 }
 skip_marker = "SKIP"
-title_marker = "PAGE TITLE"
+title_marker = "<title>"
+template_title_marker = "PAGE TITLE"
 
 content_filenames = all_files_of_types(['html'], input_dir)
 for content_filename in content_filenames:
@@ -46,8 +47,8 @@ for content_filename in content_filenames:
             continue
         title = "Nathaniel Saxe"
         if title_marker in content:
-            title_begin = content.find('"',content.find(title_marker))
-            title_end = content.find('"',title_begin+1)
+            title_begin = content.find('>',content.find(title_marker))
+            title_end = content.find('<',title_begin+1)
             page_title = content[title_begin+1:title_end]
             if page_title != '':
                 title = page_title + " - " + title
@@ -58,6 +59,6 @@ for content_filename in content_filenames:
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         with open(output_filename, 'w') as output_file:
-            page_data = deepcopy(template).replace(title_marker, title).replace(content_marker,content)
+            page_data = deepcopy(template).replace(template_title_marker, title).replace(content_marker,content)
             output_file.write(page_data)
         print(output_filename)
