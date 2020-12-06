@@ -6,10 +6,7 @@
 from pathlib import Path
 import os
 from copy import deepcopy
-
-# filename('/path/to/cool-file.txt') = 'cool-file'
-def filename(filepath):
-    return os.path.splitext(os.path.basename(obj_filename))[0]
+import posts
 
 def all_files_of_types(filetypes, path=''):
     result = []
@@ -39,7 +36,15 @@ skip_marker = "SKIP"
 title_marker = "<title>"
 template_title_marker = "PAGE TITLE"
 
+posts_dir = os.path.join(input_dir, 'posts')
+all_posts = posts.all_posts_html(posts_dir)
+most_recent = posts.most_recent_post(posts_dir)
+other_recent = posts.other_recent_posts(posts_dir,5)
 content_filenames = all_files_of_types(['html'], input_dir)
+all_posts_marker = "ALL POSTS"
+most_recent_marker = "MOST RECENT POST"
+other_recent_marker = "OTHER RECENT POSTS"
+
 for content_filename in content_filenames:
     with open(content_filename, 'r') as content_file:
         content = content_file.read()
@@ -60,5 +65,6 @@ for content_filename in content_filenames:
             os.makedirs(out_dir)
         with open(output_filename, 'w') as output_file:
             page_data = deepcopy(template).replace(template_title_marker, title).replace(content_marker,content)
+            page_data = page_data.replace(most_recent_marker,most_recent).replace(other_recent_marker,other_recent).replace(all_posts_marker,all_posts)
             output_file.write(page_data)
         print(output_filename)
