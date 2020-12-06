@@ -17,6 +17,9 @@ def inside_first_div(div,text):
     div_end = text.find('<',div_start+1)
     return text[div_start+1:div_end]
 
+def to_datetime(date_string):
+    return datetime.datetime.strptime(date_string,"%b %d, %Y")
+
 # filename('/path/to/cool-file.txt') = 'cool-file.txt'
 def filename(filepath):
     return os.path.basename(filepath)
@@ -50,13 +53,13 @@ def all_posts(posts_dir):
             desc = inside_first_div(desc_marker, content)
             date = inside_first_div(date_marker, content)
             try:
-                datetime.datetime.strptime(date,"%b %d, %Y")
+                to_datetime(date)
             except ValueError:
                 print(post_filename,"has date written in wrong format - excluding from list")
                 continue
             result.append((to_html(title, desc, date, url_path(post_filename)),date))
     #sort newest posts first
-    result = reversed(sorted(result, key=lambda x: datetime.datetime.strptime(x[1],"%b %d, %Y")))
+    result = reversed(sorted(result, key=lambda x: to_datetime(x[1])))
     #discard dates after sort
     return list(map(lambda x: x[0], result))
 def to_html_list(strings):
