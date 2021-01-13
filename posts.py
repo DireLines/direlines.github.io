@@ -2,6 +2,7 @@
 from pathlib import Path
 import os
 import datetime
+from datetime import date
 
 def all_files_of_types(filetypes, path=''):
     result = []
@@ -34,6 +35,8 @@ def all_posts(posts_dir):
     desc_marker = '<div class="subtitle">'
     date_marker = '<div class="date">'
     skip_marker = "SKIP"
+
+    date_fmt = "%b %d, %Y"
     
     result = []
     
@@ -48,15 +51,21 @@ def all_posts(posts_dir):
                 continue
             title = inside_first_div(title_marker,content)
             desc = inside_first_div(desc_marker, content)
-            date = inside_first_div(date_marker, content)
+            date_text = inside_first_div(date_marker, content)
             try:
-                datetime.datetime.strptime(date,"%b %d, %Y")
+                datetime.datetime.strptime(date_text, date_fmt)
             except ValueError:
-                print(post_filename,"has date written in wrong format - excluding from list")
-                continue
-            result.append((to_html(title, desc, date, url_path(post_filename)),date))
+                today = date.today().strftime(date_fmt)
+                content = content.replace(
+                    f'<div class="date">{date_text}</div>', 
+                    f'<div class="date">{today}</div>')
+                date_text = today
+                with open(post_filename, 'w') as f:
+                    f.write(content)
+                print(f'added date {today} to {post_filename}')
+            result.append((to_html(title, desc, date_text, url_path(post_filename)),date_text))
     #sort newest posts first
-    result = reversed(sorted(result, key=lambda x: datetime.datetime.strptime(x[1],"%b %d, %Y")))
+    result = reversed(sorted(result, key=lambda x: datetime.datetime.strptime(x[1], date_fmt)))
     #discard dates after sort
     return list(map(lambda x: x[0], result))
 def to_html_list(strings):
