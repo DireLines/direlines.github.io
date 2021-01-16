@@ -30,7 +30,8 @@ if not os.path.exists(output_dir):
 
 #special additional processing
 special_cases = {
-    #eg "path/to/file.html": "the/actual/url.html"
+    #arbitrary remapping of urls
+    #"path/to/file.html": "the/actual/url.html"
 }
 skip_marker = "SKIP"
 title_marker = "<title>"
@@ -48,7 +49,12 @@ other_recent_marker = "OTHER RECENT POSTS"
 for content_filename in content_filenames:
     with open(content_filename, 'r') as content_file:
         content = content_file.read()
+        output_filename = str(content_filename).replace(input_dir,output_dir,1)
+        if(output_filename in special_cases):
+            output_filename = special_cases[output_filename]
         if skip_marker in content:
+            if os.path.exists(output_filename):
+                os.remove(output_filename)
             continue
         title = "Nathaniel Saxe"
         if title_marker in content:
@@ -57,9 +63,6 @@ for content_filename in content_filenames:
             page_title = content[title_begin+1:title_end]
             if page_title != '':
                 title = page_title + " | " + title
-        output_filename = str(content_filename).replace(input_dir,output_dir,1)
-        if(output_filename in special_cases):
-            output_filename = special_cases[output_filename]
         out_dir = os.path.dirname(output_filename)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
