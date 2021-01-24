@@ -14,9 +14,9 @@ def to_html(title, desc, date, link):
     return f'{date}: <a href="{link}">{title}</a> - {desc}'
 
 def inside_first_div(div,text):
-    div_start = text.find('>',text.find(div))
-    div_end = text.find('<',div_start+1)
-    return text[div_start+1:div_end]
+    div_start = text.find('>',text.find(div))+1
+    div_end = text.find('<',div_start)
+    return text[div_start:div_end]
 
 # filename('/path/to/cool-file.txt') = 'cool-file.txt'
 def filename(filepath):

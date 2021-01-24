@@ -63,6 +63,7 @@ for content_filename in content_filenames:
             page_title = content[title_begin+1:title_end]
             if page_title != '':
                 title = page_title + " | " + title
+        content = content.replace("\n\n", "\n</p><p>\n")
         out_dir = os.path.dirname(output_filename)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
