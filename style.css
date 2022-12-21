@@ -1,135 +1,136 @@
 /*https://www.fontsquirrel.com/fonts/computer-modern*/
 @font-face {
-    font-family: CMU Serif;
-    src: url(fonts/cmunrm.ttf);
+  font-family: CMU Serif;
+  src: url(fonts/cmunrm.ttf);
 }
 
 /*https://fonts.google.com/specimen/Inconsolata*/
 @font-face {
-    font-family: Inconsolata;
-    src: url(fonts/Inconsolata.ttf);
+  font-family: Inconsolata;
+  src: url(fonts/Inconsolata.ttf);
 }
 
-html, body {
-    max-width: 100%;
-    overflow-x: hidden;
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-body{
-    color:#DDD;
-    background-color: #334;
-    font-family: CMU Serif;
-    font-size:18px;
+body {
+  color: #ddd;
+  background-color: #334;
+  font-family: CMU Serif;
+  font-size: 18px;
 }
 
-#navbar{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #223;
-    color: #AAA;
-    font-size: 28px;
-    padding:10px;
-    text-align:left;
+#navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #223;
+  color: #aaa;
+  font-size: 28px;
+  padding: 10px;
+  text-align: left;
 }
 #navbar a:link {
-    color: #BBB;
-    text-decoration: none;
+  color: #bbb;
+  text-decoration: none;
 }
 #navbar a:visited {
-    color: #BBB;
-    text-decoration: none;
+  color: #bbb;
+  text-decoration: none;
 }
 #navbar a:hover {
-    color: #FFF;
-    text-decoration: none;
+  color: #fff;
+  text-decoration: none;
 }
 #navbar a:active {
-    color: #FFF;
-    text-decoration: underline;
+  color: #fff;
+  text-decoration: underline;
 }
 
-#content{
-    margin:50px auto;
-    max-width:700px;
-    line-height:1.6;
-    font-size:18px;
-    padding:10px;
+#content {
+  margin: 50px auto;
+  max-width: 800px;
+  line-height: 1.6;
+  font-size: 18px;
+  padding: 10px;
 }
 
 img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  width: 100%;
 }
 
-figcaption{
-    padding: 5px;
-    font-size: 14px;
-    text-align: center;
+figcaption {
+  padding: 5px;
+  font-size: 14px;
+  text-align: center;
 }
 
-.title{
-    font-size: 55px;
-    text-align: center;
-    padding:20px;
+.title {
+  font-size: 55px;
+  text-align: center;
+  padding: 20px;
 }
 
-.subtitle{
-    font-size: 22px;
-    font-style: italic;
-    text-align: center;
-    padding:10px;
+.subtitle {
+  font-size: 22px;
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
 }
 
-.date{
-    font-size: 22px;
-    font-style: bold;
+.date {
+  font-size: 22px;
+  font-style: bold;
 }
 
-.text{
-    font-size:18px;
-    color:#DDD;
-    text-align: left;
+.text {
+  font-size: 18px;
+  color: #ddd;
+  text-align: left;
 }
 
 iframe {
-    display: block;
+  display: block;
 }
 
-blockquote pre{
-    font-family: CMU Serif;
-    font-style: italic;
+blockquote pre {
+  font-family: CMU Serif;
+  font-style: italic;
 }
 
-pre code{
-    font-family: Inconsolata;
-    font-size: 20px;
-    color:#CCC;
-    background-color: #223;
-    border: 2px solid #557;
-    display: block; 
-    padding: 20px;
-    line-height:1.2
+pre code {
+  font-family: Inconsolata;
+  font-size: 18px;
+  color: #ccc;
+  background-color: #223;
+  border: 2px solid #557;
+  display: block;
+  padding: 20px;
+  line-height: 1.2;
 }
 
 a:link {
-    color: #6DF;
-    text-decoration: none;
+  color: #6df;
+  text-decoration: none;
 }
 a:visited {
-    color: #C8F;
-    text-decoration: none;
+  color: #c8f;
+  text-decoration: none;
 }
 a:hover {
-    color: #FFF;
-    text-decoration: none;
+  color: #fff;
+  text-decoration: none;
 }
 a:active {
-    color: #FFF;
-    text-decoration: underline;
+  color: #fff;
+  text-decoration: underline;
 }
