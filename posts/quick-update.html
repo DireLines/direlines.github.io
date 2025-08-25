@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <base href="https://direlines.github.io/">
+  <meta charset="utf-8" />
+  <title>Quick Update | Nathaniel Saxe</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="icon" href="img/favicon.png">
+
+  <!-- highlightjs.org -->
+  <link rel="stylesheet" href="highlight/styles/atelier-dune-dark.css">
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- highlightjs.org -->
+</head>
+
+<body>
+  <div id="navbar">
+    <a href="">Nathaniel Saxe</a> |
+    <a href="posts.html">Posts</a> |
+    <a href="about.html">About</a>
+  </div>
+  <div id="content">
+    <title>Quick Update</title>
+<div class="title">Quick Update</div>
+<div class="subtitle">starting this up again after a long hiatus</div>
+<div class="date">Aug 24, 2025</div> <!-- remove all occurrences of the word "skip" (all caps specifically) to auto-populate the date and publish the post-->
+<div class="text">
+</p><p>
+Hello, I'm alive and doing well! So well in fact that I'm gonna start blogging again.
+</p><p>
+I think I'll keep it pretty casual, kinda just need an outlet for thoughts that others can see. The educational effort-posts will have to wait for another day.
+</p><p>
+Here are the major things which have occurred since I set up this blog for myself at the start of COVID:
+</p><p>
+I got a software engineering job, although it did take a year and a half post graduation. It was at Comcast - pretty enjoyable work, and I was pretty good at it. I unfortunately was forced to learn and write Typescript at this job, from which I have not recovered.
+</p><p>
+I moved into my own place, first in my hometown of Charlottesville but then up in Northern Virginia (Nova) where most of my friends from college are.
+</p><p>
+I have friends! They are cool people! Some are from college, some friends of friends from the Nova area. Most of them work for defense contractors in either a tech or contract-writing role, and they all reeaaally like board games. I am very happy to feel supported by them and supportive of them, and that we share so many interests - game design, technology, politics and *getting the details right*.
+</p><p>
+With these friends, I helped make an arcade cabinet - and an arcade game which is played on the cabinet - which got featured in the Indie Arcade at Super MAGFest, our favorite local gaming convention. I did the music, some of the performance optimization and balancing, some construction. It was truly a blast, and seeing people play it and especially bump the music fills me with pride every time. The fact that we did this in our spare time between busy work days - created a full game with charm and goofiness and actually fun gameplay - instilled a new passion and sense of hope about creative work in me.
+</p><p>
+After working for Comcast for 2 and a bit years I got another job, this time at a silicon valley startup founded by my former boss at Comcast. The startup was a GPU Cloud provider during the really exciting early stages of the AI boom (or perhaps bubble). Typescript was also written at this job, but it was much more interesting work in general and I really hit my stride as a software engineer in this role. It was a great experience to work on a team full of really inspired, competent engineers who knew how to hustle and adapt to the diverse needs of an early-stage business. It was also slowly draining me of my energy and causing increasingly bad RSI and stress. By the end of it, I needed a change. I could sense that I didn't have enough stamina to do this job and also self-improve in the way I wanted.
+</p><p>
+In this time, the main wisdoms I gained about how to do software engineering good are as follows:
+<ol>
+    <li>
+        The job of code is partly to communicate the intention of the developer, but *first and foremost* it is to describe what instructions the computer should run on what data. Anything beyond that is a figment of our imagination, sometimes a very useful one but often not. As a consequence of this, I really much prefer basic imperative code in a statically typed language to any other major paradigm. Rust held my interest for a while, but it insisted over and over again that a figment of the compiler's imagination was a real thing, that it knew better than me what contracts I wanted the code to enforce. Then I wrote Go at the startup job and embracing this pragmatic philosophy and code written by other people with the same philosophy was a breath of fresh air.
+    </li>
+    <li>
+        At the beginning you want results, but at the end you want control above all else (paraphrased from Eskil Steenberg). It is extremely important to be able to see all the way down the stack if you need to. Be able to peek into the source code of your dependencies, or even better write the dependencies yourself. Keeping clarity and control over the logic is usually preferable to having more functionality.
+    </li>
+    <li>
+        There are infinite dimensions in which any given piece of software can scale or need to change. You can waste a lot of time mispredicting which ones will be important to handle. Don't pre-optimize or over-abstract, use "semantic compression" a la Casey Muratori to decide which abstractions are actually useful for your actual requirements. That said, you also aren't an idiot. Sometimes it is pretty obvious which dimensions will need to handle scale or which logic will most likely need to change in the future. Both these perspectives are important, and writing code effectively in a software engineering team setting is a balancing act between them.
+    </li>
+    <li>
+        Do not be afraid to apply the same automation / optimization brain you apply to the performance of the code at all levels - usually the same core engineering skills are transferable to these new domains. This includes stuff like your development process and ergonomics, team structure, task management apps and so on. Learn editor macros, keyboard shortcuts, and customization options - it seems like just fussing around with minutiae at first but it pays dividends.
+    </li>
+</ol>
+</p><p>
+With these lessons in mind, I have now embarked on my own independent developer journey, which will last until my savings account balance drops below a level I am comfortable with. Probably a few years.
+</p><p>
+Here's what I'm trying to do in that time:
+</p><p>
+<ol>
+    <li>
+        Make some video games. I have seven game ideas I really desperately want to see realized and play. If I can do even one of them in this time, I will be beyond proud of myself. In the interest of having full control, I am making my own simplified 2D engine in Odin, my programming language soul mate. It is a joyful and challenging process. As I'm writing this, I have just gotten over the hump of continuous collision resolution between axis-aligned bounding boxes for the first time. If I take one more step, it'll be the farthest I've ever been from home.
+    </li>
+    <li>
+        Make a nested-graph-based task management webapp, for tracking my work or for anybody else who also thinks of work as nested DAGs with subtasks and dependencies between tasks. I have it maybe 60% done <a href="https://graphout.work">here</a> and I am already getting great value from it.
+    </li>
+    <li>
+        Make some music. I think I have a natural talent for music making, and it feels silly not to do anything with it. There are some places where my composition process and discipline just needs to mature with practice. Also, I exist at the intersection of music and code, and I think I might be able to apply music theory to code and code to music production in ways people haven't before.
+    </li>
+    <li>
+        Make some open-source software tools. When I need a "real job" again, I will want some open-source reference solutions to commonly encountered problems in full-stack development. That way, when I want to solve a problem "properly" at multiple future employers, I am not writing a custom solution that they own, I am using my reference. It will save a lot of time and also conflicts of interest.
+    </li>
+</ol>
+</p><p>
+
+Hopefully I see you again soon with some more ramblings! ♥️ Nate
+</p><p>
+</div>
+  </div>
+</body>
+
+</html>
