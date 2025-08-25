@@ -8,7 +8,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   display: block;
   overflow-x: auto;
   padding: 0.5em;
-  background: #23241f;
+  background: #0c0c2a;
 }
 
 .hljs,
@@ -33,6 +33,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 
 .hljs-code,
 .hljs-title,
+.hljs-built_in,
 .hljs-section,
 .hljs-selector-class {
   color: #a6e22e;
@@ -65,7 +66,6 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 
 .hljs-string,
 .hljs-type,
-.hljs-built_in,
 .hljs-builtin-name,
 .hljs-selector-id,
 .hljs-selector-attr,
@@ -79,5 +79,5 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 .hljs-comment,
 .hljs-deletion,
 .hljs-meta {
-  color: #75715e;
+  color: #6a9955;
 }
