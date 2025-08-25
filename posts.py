@@ -3,6 +3,9 @@ from pathlib import Path
 import os
 import datetime
 from datetime import date
+from sys import argv
+
+is_local = len(argv) > 1 and argv[1] == "local"
 
 def all_files_of_types(filetypes, path=''):
     result = []
@@ -20,15 +23,16 @@ def inside_first_div(div,text):
     return text[div_start:div_end]
 
 # filename('/path/to/cool-file.txt') = 'cool-file.txt'
-def filename(filepath):
-    return os.path.basename(filepath)
-def url_path(filepath):
-    return os.path.join('posts',filename(filepath))
+def filename(filepath, include_ext = False):
+    return os.path.basename(filepath) if include_ext else Path(filepath).stem
+def url_path(filepath,include_ext = False):
+    return os.path.join('posts',filename(filepath,include_ext))
 
 #python list of all posts' html
 #I return this instead of the html <ul> list
 #so that I can slice it 
 def all_posts(posts_dir):
+    global is_local
     if not os.path.exists(posts_dir):
         print(posts_dir, "doesn't exist")
         return
@@ -64,7 +68,7 @@ def all_posts(posts_dir):
                 with open(post_filename, 'w') as f:
                     f.write(content)
                 print(f'added date {today} to {post_filename}')
-            result.append((to_html(title, desc, date_text, url_path(post_filename)),date_text,title))
+            result.append((to_html(title, desc, date_text, url_path(post_filename,include_ext=is_local)),date_text,title))
     #sort newest posts first, then alphabetically for posts published on the same day
     result = reversed(sorted(result, key=lambda x: x[2]))
     result = reversed(sorted(result, key=lambda x: datetime.datetime.strptime(x[1], date_fmt)))
