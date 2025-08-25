@@ -63,8 +63,9 @@ def all_posts(posts_dir):
                 with open(post_filename, 'w') as f:
                     f.write(content)
                 print(f'added date {today} to {post_filename}')
-            result.append((to_html(title, desc, date_text, url_path(post_filename)),date_text))
-    #sort newest posts first
+            result.append((to_html(title, desc, date_text, url_path(post_filename)),date_text,title))
+    #sort newest posts first, then alphabetically for posts published on the same day
+    result = reversed(sorted(result, key=lambda x: x[2]))
     result = reversed(sorted(result, key=lambda x: datetime.datetime.strptime(x[1], date_fmt)))
     #discard dates after sort
     return list(map(lambda x: x[0], result))

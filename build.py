@@ -8,6 +8,19 @@ import os
 from sys import argv
 from copy import deepcopy
 import posts
+import shutil
+
+def copy_dir(src,dst):
+    for src_dir, _, files in os.walk(src):
+        dst_dir = src_dir.replace(src, dst, 1)
+        if not os.path.exists(dst_dir):
+            os.makedirs(dst_dir)
+        for file_ in files:
+            src_file = os.path.join(src_dir, file_)
+            dst_file = os.path.join(dst_dir, file_)
+            if os.path.exists(dst_file):
+                os.remove(dst_file)
+            shutil.copy(src_file, dst_dir)
 
 def all_files_of_types(filetypes, path=''):
     result = []
@@ -78,3 +91,5 @@ for content_filename in content_filenames:
             page_data = page_data.replace(most_recent_marker,most_recent).replace(other_recent_marker,other_recent).replace(all_posts_marker,all_posts)
             output_file.write(page_data)
         print(output_filename)
+
+copy_dir(os.path.join(input_dir, 'img'),os.path.join(output_dir,'img'))
