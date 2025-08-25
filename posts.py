@@ -11,7 +11,8 @@ def all_files_of_types(filetypes, path=''):
     return result
 
 def to_html(title, desc, date, link):
-    return f'{date}: <a href="{link}">{title}</a> - {desc}'
+    maybe_desc = f' - {desc}' if desc != "" else ""
+    return f'{date}: <a href="{link}">{title}</a>{maybe_desc}'
 
 def inside_first_div(div,text):
     div_start = text.find('>',text.find(div))+1
