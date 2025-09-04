@@ -27,15 +27,21 @@ def all_files_of_types(filetypes, path=''):
         result.extend(Path(path).rglob('*.'+filetype))
     return result
 
+is_local = len(argv) > 1 and argv[1] == "local"
+
 base_href = "https://direlines.github.io/"
-if len(argv) > 1 and argv[1] == "local":
+home_href = ""
+posts_href = "posts"
+about_href = "about"
+if is_local:
     cwd = os.getcwd()
     base_href = f"file://{cwd}/"
+    home_href = "index.html"
+    posts_href += ".html"
+    about_href += ".html"
 template_file = open("template/template.html",'r')
 template = template_file.read()
 template_file.close()
-base_href_marker = "BASE HREF SHOULD BE HERE"
-content_marker = "CONTENT SHOULD BE HERE"
 
 input_dir = "blog-content" #this folder is gitignored so that I can keep it separate and private
 output_dir = "."
@@ -86,7 +92,13 @@ for content_filename in content_filenames:
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
         with open(output_filename, 'w') as output_file:
-            page_data = deepcopy(template).replace(template_title_marker, title).replace(content_marker,content).replace(base_href_marker,base_href)
+            base_href_marker = "BASE HREF SHOULD BE HERE"
+            content_marker = "CONTENT SHOULD BE HERE"
+            posts_href_marker = "POSTS HREF SHOULD BE HERE"
+            about_href_marker = "ABOUT HREF SHOULD BE HERE"
+            home_href_marker = "HOME HREF SHOULD BE HERE"
+            page_data = deepcopy(template).replace(template_title_marker, title).replace(content_marker,content)
+            page_data = page_data.replace(base_href_marker,base_href).replace(home_href_marker,home_href).replace(posts_href_marker,posts_href).replace(about_href_marker,about_href)
             page_data = page_data.replace(most_recent_marker,most_recent).replace(other_recent_marker,other_recent).replace(all_posts_marker,all_posts)
             output_file.write(page_data)
         print(output_filename)
