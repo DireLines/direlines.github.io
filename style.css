@@ -134,3 +134,17 @@ a:active {
   color: #fff;
   text-decoration: underline;
 }
+
+.permalink {
+  text-decoration: none;
+  color: #aaa;
+  margin-left: 0.4em;
+  font-size: 0.8em;
+  visibility: hidden;
+}
+
+h2:hover .permalink,
+h3:hover .permalink,
+h4:hover .permalink {
+  visibility: visible;
+}

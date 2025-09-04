@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <base href="https://direlines.github.io/">
+  <base href="file:///Users/nathanielsaxe/Documents/Code/direlines.github.io/">
   <meta charset="utf-8" />
   <title>All Posts | Nathaniel Saxe</title>
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -13,6 +13,36 @@
   <script src="highlight/highlight.pack.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
   <!-- highlightjs.org -->
+
+  <!-- generate permalinks -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // choose which heading levels to add permalinks to
+  const headings = document.querySelectorAll("h2, h3, h4");
+
+  headings.forEach(h => {
+    // ensure the heading has an id
+    if (!h.id) {
+      h.id = h.textContent
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w]+/g, "-");
+    }
+
+    // build absolute permalink: strip any old hash and add new one
+    const baseUrl = window.location.href.split("#")[0];
+    const permalinkUrl = baseUrl + "#" + h.id;
+
+    // create the anchor
+    const link = document.createElement("a");
+    link.href = permalinkUrl;
+    link.className = "permalink";
+    link.textContent = "¶";
+    
+    h.appendChild(link);
+  });
+});
+</script>
 </head>
 
 <body>
@@ -26,8 +56,8 @@
 <div class="title">All Posts</div>
 <div class="text">
 <ul>
-  <li>Aug 24, 2025: <a href="posts/quick-update">Quick Update</a> - starting this up again after a long hiatus</li>
-  <li>Dec 5, 2020: <a href="posts/first">The First Post</a> - status update, what this blog is about</li>
+  <li>Aug 24, 2025: <a href="posts/quick-update.html">Quick Update</a> - starting this up again after a long hiatus</li>
+  <li>Dec 5, 2020: <a href="posts/first.html">The First Post</a> - status update, what this blog is about</li>
 </ul>
 
 </div>

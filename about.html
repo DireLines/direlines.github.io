@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <base href="https://direlines.github.io/">
+  <base href="file:///Users/nathanielsaxe/Documents/Code/direlines.github.io/">
   <meta charset="utf-8" />
   <title>About | Nathaniel Saxe</title>
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -13,6 +13,36 @@
   <script src="highlight/highlight.pack.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
   <!-- highlightjs.org -->
+
+  <!-- generate permalinks -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // choose which heading levels to add permalinks to
+  const headings = document.querySelectorAll("h2, h3, h4");
+
+  headings.forEach(h => {
+    // ensure the heading has an id
+    if (!h.id) {
+      h.id = h.textContent
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w]+/g, "-");
+    }
+
+    // build absolute permalink: strip any old hash and add new one
+    const baseUrl = window.location.href.split("#")[0];
+    const permalinkUrl = baseUrl + "#" + h.id;
+
+    // create the anchor
+    const link = document.createElement("a");
+    link.href = permalinkUrl;
+    link.className = "permalink";
+    link.textContent = "¶";
+    
+    h.appendChild(link);
+  });
+});
+</script>
 </head>
 
 <body>

@@ -9,7 +9,6 @@ from sys import argv
 from copy import deepcopy
 import posts
 import shutil
-
 def copy_dir(src,dst):
     for src_dir, _, files in os.walk(src):
         dst_dir = src_dir.replace(src, dst, 1)
