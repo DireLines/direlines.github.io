@@ -221,7 +221,7 @@ Adapting the renderer to use textures from the atlas instead of loading files in
 </p><p>
 <h2>Shear</h2>
 </p><p>
-Except actually, <code>rl.DrawTexturePro</code> doesn't cover all the cases we need. The problem is that is always draws the texture as a rectangle, which is usually good enough but breaks once transform hierarchies are added to the mix.
+Except actually, <code>rl.DrawTexturePro</code> doesn't cover all the cases we need. The problem is that it always draws the texture as a rectangle, which is usually good enough but breaks once transform hierarchies are added to the mix.
 </p><p>
 The Transform struct allows a position, rotation and scale, relative to either global coordinates or the coordinates of the object's parent. Even with all of those together, you still get a transformation which maps rectangles to rectangles, so a rectangular texture needs to get drawn as a rectangle on screen and <code>DrawTexturePro</code> works fine.
 </p><p>
