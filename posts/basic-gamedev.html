@@ -1,0 +1,566 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <base href="https://direlines.github.io/">
+  <meta charset="utf-8" />
+  <title>Simple Solutions to Game Engine Problems | Nathaniel Saxe</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="icon" href="img/favicon.png">
+
+  <!-- highlightjs.org -->
+  <link rel="stylesheet" href="highlight/styles/monokai-blue.css">
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- highlightjs.org -->
+
+  <!-- generate permalinks -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // choose which heading levels to add permalinks to
+  const headings = document.querySelectorAll("h2, h3, h4");
+
+  headings.forEach(h => {
+    // ensure the heading has an id
+    if (!h.id) {
+      h.id = h.textContent
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w]+/g, "-");
+    }
+
+    // build absolute permalink: strip any old hash and add new one
+    const baseUrl = window.location.href.split("#")[0];
+    const permalinkUrl = baseUrl + "#" + h.id;
+
+    // create the anchor
+    const link = document.createElement("a");
+    link.href = permalinkUrl;
+    link.className = "permalink";
+    link.textContent = "¶";
+
+    h.appendChild(link);
+  });
+});
+</script>
+</head>
+
+<body>
+  <div id="navbar">
+    <a href="">Nathaniel Saxe</a> |
+    <a href="posts">Posts</a> |
+    <a href="about">About</a>
+  </div>
+  <div id="content">
+    <title>Simple Solutions to Game Engine Problems</title>
+<div class="title">Simple Solutions to Game Engine Problems</div>
+<div class="subtitle">fundamental problems and solutions in from-scratch 2D game development</div>
+<div class="date">Nov 6, 2025</div> 
+<div class="text">
+</p><p>
+Game programming is notorious for being full of technical rabbit holes to get lost down. This is especially true at the lower levels of the codebase, what people usually call "engine code".
+</p><p>
+Generically, my advice in gamedev is to not do something <i>unless the game needs it</i>. 
+</p><p>
+Be ruthlessly and relentlessly honest with yourself about this. <i>Does the actual game I am making need this system for some actual planned gameplay?</i> If the answer is "maybe" rather than "yes", you probably shouldn't do it, even if it sounds really fun to solve (trust me, I get it).
+</p><p>
+With that said, there are some problems you unavoidably have to solve, or at least reuse somebody else's solution for, in 2D game development. Here are the ones I have encountered, along with how I dealt with them for the development of my first from-scratch game. As much as anything, this post is to make sure I know the solutions well enough to explain them to others.
+</p><p>
+<h2>The Game vs The Engine</h2>
+</p><p>
+Where does the engine code end and the game code begin? When you need a new high-performance system in your game, how do you know whether it's important or performance-intensive enough to be an engine feature? Do you use a separate scripting language at the game layer?
+</p><p>
+My solution to this turns out to be more philosophical than technical. The engine code doesn't exist. There is no game-agnostic code. It's all just the game.
+</p><p>
+Sure, some systems might feel like they're solving generic problems and have nothing to do with your game. But regardless of how low-level they are, you're making them because they'll be used in your game, per the advice in the introduction.
+</p><p>
+The reason the industry as a whole has insisted so heavily on making the game/engine distinction is, I think, because of the historical lack of truly user-friendly systems languages. Game programming at the engine level is systems programming; there's no getting around performance constraints, memory layout problems, state management problems and so on. So it makes sense to use a systems language for this foundational code, which for decades has meant C or C++.
+</p><p>
+But a lot of people (quite reasonably) would rather program their game in a language with comfier, more modern syntax than C++, and leave "the hard parts" that need to be written in C++ for performance reasons up to the engine developers.
+</p><p>
+For years, I agreed with this reasoning because I labored under the assumption that programming languages existed on a tradeoff curve between performance and ease of use. Sure, you can have concise and expressive syntax in python, but it'll cost you in performance because the language needs the LAyErS OF ABsTRAcTioN to support that syntax (garbage collection, duck typing, first class functions, and other such extravagance).
+</p><p>
+As you can probably tell from my mocking tone, I now know this is baloney. It is possible for a language to be manually memory-managed, compile to bare metal and also have really nice modern syntax and code clarity. When you have a language like that, there is no reason for you to even consider separating the engine code from the gameplay logic. Rust and go started to teach me this, but Odin drove it home. This is the problem I am really solving by using Odin for my games.
+</p><p>
+In fact, getting over this conceptual hurdle is what is allowing me to move forward instead of getting trapped in engine land thinking of every possible problem I could need solved at a systems level so I don't have to modify my engine for each game.
+</p><p>
+Alright, hot take over. Let's get into some of the real meat of game development.
+</p><p>
+<h2>Cross-Platform Graphics & Input</h2>
+</p><p>
+Exporting to windows / mac / linux / android and expecting everything to still work without changing any code is one of the main benefits of using an engine such as Unity.
+</p><p>
+For my purposes, I thought it would be really boring and tedious to deal with a bunch of OS-specific graphics APIs. This is not the part of game development I have opinions about or want to even know the tradeoffs about. As long as the solution can fairly efficiently use the hardware, it's good enough for me.
+</p><p>
+So I just used <a href="https://www.raylib.com/index.html">Raylib</a>, a cross-platform graphics library made in C which is recommended by others and has good Odin bindings in the vendor library. Feel free to email me why raylib actually sucks or whatever. I will listen, but raylib's API has covered everything I need and it scales well enough that it is very much not the bottleneck, so I prooobably won't change anything.
+</p><p>
+<h2>Basic Rendering</h2>
+</p><p>
+Dead simple with raylib or pretty much any graphics library. In fact I won't even explain it here. Find a code example, follow the docs, you'll have 1000 rectangles drawn on screen in a few minutes. Here's a code example I had lying around the house:
+</p><p>
+<pre><code>package main
+import rl "vendor:raylib"
+main :: proc() {
+    rl.InitWindow(1280, 720, "Odin + Raylib example")
+    for !rl.WindowShouldClose() {
+        rl.BeginDrawing()
+        rl.ClearBackground({160, 200, 255, 255})
+        for i in 0 ..< 50 {
+            for j in 0 ..< 50 {
+                rl.DrawRectangle(i32(i) * 10 + 350, i32(j) * 10 + 150, 5, 5, rl.WHITE)
+            }
+        }
+        rl.EndDrawing()
+    }
+    rl.CloseWindow()
+}
+</code></pre>
+</p><p>
+<h2>Memory Layout</h2>
+</p><p>
+A game is basically a list of objects to simulate and render, and some code to run on those objects. For example, my GameObject struct looks like this so far:
+<pre><code>GameObject :: struct {
+    handle:                    GameObjectHandle, //needed for handle map
+    parent_handle:             Maybe(GameObjectHandle), //for transform hierarchy
+    name:                      string,
+    transform:                 Transform,
+    velocity:                  vec2, //world units per second
+    angular_velocity:          f64, //degrees per second
+    linear_drag, angular_drag: f64, //percent dampening per second
+    can_collide:               bool,
+    texture_name:              string,
+    sprite:                    Sprite,
+    animation:                 AnimationState,
+    hitbox:                    Hitbox,
+    //more stuff will go here as needed for the particular game
+}</code></pre>
+</p><p>
+This is a <i>superstruct</i>, so named because it's the superset of all fields any GameObject could need in my game. The objects are therefore all in the same data structure, one big dynamic array of everything. Kind of like punchcards, the object structs will have "holes" in them for all the properties not used for a particular object. No inheritance or subtyping is needed or wanted at this point, but if it comes to that I will use <a href="https://www.youtube.com/watch?v=UidiNCZVPKw">some Odin <code>using</code> cleverness from Karl Zylinski</a> to make it smoother syntax-wise.
+</p><p>
+You might think this sounds wasteful in terms of memory, but for a game wasting memory should be a secondary concern behind <i>running quickly</i> (within reason). This yields performance benefits from cache locality for the intensive processes that iterate over all objects in order every frame, at least over a naive approach to heap-allocate each GameObject with the data it needs and maintain a list of pointers. <b>*Something*</b> needs to be a contiguous array for simulation to take advantage of caches properly.
+</p><p>
+The superstruct approach I am choosing is one extreme of a spectrum of data layouts. Another point on the spectrum is an entity-component system (ECS) - a way to try to get the best of both worlds, reconciling the heterogeneity of the object data with the cache advantages of using an array. Components are pulled out of the object which live in their own arrays, adding a layer of indirection on retrieving a piece of object's data (another array access perhaps, storing an index into the component array for each object which has that component). This is kinda like splitting a table out into two tables in a relational database.
+</p><p>
+The advantage this has is that the component arrays don't have any holes in them - if you need to iterate over all instances of Component X, you can do so with the fewest possible cache lines. On the other hand, more indirection means more expensive accesses when querying all the fields in the object. It's hard to know whether this will be faster at the scale your game needs to run at. On balance, this can be either good or bad for performance, but is definitely complex enough to slow down development whether it's implemented well or not.
+</p><p>
+So I am choosing the more caveman-like approach of just tossing them all in a big list, and hoping enough objects need enough of the components that the holes don't really make much of a difference in performance. Superstruct it is, for now.
+</p><p>
+<h2>Transform Hierarchies</h2>
+</p><p>
+Ok, so you've rendered your 1000 rectangles. Pretty soon you're gonna start wanting them to move around, spin, zoom in and out, and so on. The "so on" is called <i>arbitrary 2D affine transformations</i>, and the standard way to implement these is by applying a 3x3 matrix to the corners of the texture to figure out where they end up when drawn to the screen. 
+</p><p>
+Why a 3x3 matrix if the transformation is in 2 dimensions? Well, because a 2x2 matrix can only encode any 2D <i>linear</i> transformation, but we need to encode any 2D <i>affine</i> transformation (an affine transformation is a linear transformation + a translation). So we use the top 2 rows of a 3x3 matrix, 6 cells in total, to encode the 2x2 matrix for the linear transformation and, next to it, the 2 coordinates of the translation.
+</p><p>
+The 3x3 matrix also always has a 1 in the last cell at the bottom. Why? Because then composing these 2D affine transformations is mathematically equivalent to matrix-multiplying the 3x3 matrices and then ignoring the bottom row. A slight variation of this trick still works perfectly in 3D and, miraculously, also handles perspective. This mathematical tool is called <a href="https://en.wikipedia.org/wiki/Homogeneous_coordinates"><i>homogeneous coordinates</i></a> and is a cornerstone of 3D graphics.
+</p><p>
+To be clear, I am not storing the 3x3 matrix inside each object. I am storing a struct encoding the possible transform options, and then computing the 3x3 matrix from this information when it's needed (e.g. in the renderer).
+</p><p>
+<pre><code>Transform :: struct {
+    position: vec2,
+    rotation: f64,
+    scale:    vec2,
+    pivot:    vec2,
+}</code></pre>
+</p><p>
+And why do we want to quickly compose the transformations anyway? Because it's useful to be able to render an object with coordinates relative to another object, its "parent." This immediately comes up when you add a separately animated or swappable component of an object, like a gun (which needs to be equipped and unequipped in a weapon slot) or a mouth (which needs to animate talking separately from the rest of the body). It's also useful adding UI components like a health bar which are scoped to particular entities.
+</p><p>
+This tree of parent/child objects is a very common pattern in game development, and is called the <i>transform hierarchy</i>. This is accompanied by some process computing the 3x3 transform matrix converting every object to global coordinates, which now needs to take into account not just the object's position/rotation/scale, but also that of all its nested parents in the hierarchy.
+</p><p>
+One solution here is to store the objects or their ids in an actual tree structure, and then traverse the tree while keeping a running matrix product of the transformations - applying the forward transformation whenever you enter a node and the backward transformation (the inverse matrix) or just popping the previous transform off a stack whenever you leave a node.
+</p><p>
+I don't intend to use the transform hierarchy all that often, so I didn't want to make a tree just for this purpose, I wanted to keep the node structure a flat array. I instead added an optional <code>parent_id</code> to the <code>GameObject</code> struct and compute the transforms based off of that in a new step, <code>recreate_final_transforms</code>. This computes the local to global transform for each object and stores it in a buffer, because that information has to be recalled in later steps potentially multiple times per object and would be expensive to recompute each time.
+</p><p>
+<h2>Object References</h2>
+</p><p>
+In any game, objects will need to keep around associations to other objects - a child object to its parent in the transform hierarchy or vice versa, a camera to its target, the player object to the currently held item.
+</p><p>
+If your game involves deleting objects as most games do, it is a common and forgivable mistake for the gameplay code to try to use a reference to an object when that object has been deleted. If this happens, would you rather your game crash immediately with a scary segfault or detect that the mistake happened, print out an error message and move on in a potentially broken state?
+</p><p>
+Despite how rhetorical that sounded, either choice is valid - such a mistake is probably a bug, and you theoretically want to debug it before shipping rather than just letting it happen. But most people and game engines choose to have graceful errors here. This is the classic "null reference exception" in Unity.
+</p><p>
+You can use pointers to other GameObjects - but pointers can very easily become stale if the objects are in a dynamic data structure that needs to move when it gets resized, and if you use a stale pointer then a scary segfault is the <i>best</i>-case scenario.
+</p><p>
+You can use indices into the array of objects, since those stay valid after resizing - but then when you delete objects, is that index permanently off limits? Does your array just have to grow forever?
+</p><p>
+The solution here is to use more than just a single number as a reference. You need a Generational ID, also called a handle. This is simply an index in an array + another number, called the generation (<code>gen</code>).
+</p><p>
+<pre><code>Handle :: struct {
+    idx: u32,
+    gen: u32,
+}</code></pre>
+</p><p>
+For any particular index, the generation starts at 0 and then is incremented for each subsequent object which uses that same slot in the array. So, if you have one of these handles laying around, you know it's still valid if and only if the generation is still the same in the actual array.
+</p><p>
+The data structure which uses these handles to store and retrieve objects is sometimes called a handle map, and Karl Zylinski comes in clutch again with a <a href="https://zylinski.se/posts/handle-based-arrays/">blog post</a> about them and several links to implementations.
+</p><p>
+<h2>Efficient Rendering</h2>
+</p><p>
+The renderer's job is to take potentially thousands of on-screen objects with data sitting around in main memory, and send the data to the GPU along with the right graphics API commands to get the objects drawn on screen. Naive code will start dropping below 60fps at a few tens of thousands of sprites, and that's without <i>the rest of the game logic</i> also slowing things down, so it's worth taking some time to try to make rendering scale better.
+</p><p>
+GPUs are massively parallel and capable of handling thousands of objects quickly once they're in GPU memory, but they are also usually pretty slow to communicate with since they're often external hardware and data needs to be sent to and fro over a connection with mediocre bandwidth and latency. This makes unexpected things efficient or inefficient in a program using the GPU pipeline such as a renderer.
+</p><p>
+For simple 2D games that just need to draw a whole bunch of sprites without anything more graphically intensive, the main trick to know is to reduce the number of <i>draw calls</i> per frame using the technique of <i>texture atlasing</i>.
+</p><p>
+A <i>draw call</i> is the CPU telling the graphics card to draw something, for instance "please draw this triangle to this render target here, with this texture id and these texture coordinates and this shader."
+</p><p>
+Each draw call incurs some overhead just on its own because it must be sent down the slow pipe to the GPU, but it incurs huge additional overhead on the GPU side if executing it means the GPU has to change some state, such as changing the active texture or shader. As a novice to graphics programming, I'm not entirely sure what this overhead consists of, but stalling some kind of pipelined process in order to propagate this change of state across the GPU makes sense to me.
+</p><p>
+To reduce the per-draw-call overhead, the GPU supports sending a <i>batched</i> draw call like "please draw this <i>list of triangles</i> to this render target here, with this texture id and this <i>list of texture coordinates</i> and this shader." 
+</p><p>
+In fact, this optimization is so important that graphics wrapper libraries such as raylib will do this batching automatically on the backend. Each call to a raylib draw function like <code>rl.DrawTexture</code> will, if applicable, only append the data from that call to a vertex buffer to be used in one of these big batched draw calls. Actually sending the draw calls is deferred until this buffer is finalized within the frame.
+</p><p>
+This batching is much more efficient in terms of data sent to the GPU, but it also means that we have to have a whole batch of things to draw with the same set of GPU state parameters (texture, shader, render target, and the like) because the same parameters apply to everything in the batch.
+</p><p>
+Is this a reasonable constraint for our 2D game? For most of the parameters, yes. We generally just render to one window with one shader (at least until the game starts to add fancy stylistic postprocessing). But we probably have folders of hundreds of texture files, one for each sprite or animation in the game, and active texture is in fact one of the state variables that's expensive to tell the GPU to change. So if we can arrange so that everything has the same texture id, all that overhead goes away and every sprite fits in the same batched draw call. This is the rationale behind <i>texture atlasing</i>.
+</p><p>
+A texture atlas or spritesheet is an image containing multiple textures packed next to each other, along with a description in some format of where each texture is located within the atlas. If you have one, the program can just load the atlas texture once at the start, and drawing a sprite then always consists of drawing a piece of the same texture, with a lookup into the atlas to determine the texture coordinates to use for that sprite.
+</p><p>
+Although art programs can often natively export to a spritesheet format, I would prefer to cobble together a big directory of single images into one atlas as a build step. I do this with a slightly modified version of <a href="https://github.com/karl-zylinski/atlas-builder">Karl Zylinski's atlas builder</a> which outputs an <code>atlas.png</code> and generates an odin file <code>atlas.odin</code> describing where each original image is within the atlas. One advantage of having atlasing as a build step, aside from being able to use images from unrelated sources, is that fonts for in-game text can also be rendered into the atlas and then raylib's <code>rl.DrawText</code> and the like can still be batched into the same draw call.
+</p><p>
+Adapting the renderer to use textures from the atlas instead of loading files individually was straightforward in raylib - the upshot is that instead of using the basic <code>rl.DrawTexture</code>, you must use <code>rl.DrawTexturePro</code> since only Pro accepts the source rectangle in texture coordinates instead of drawing the entire source texture.
+</p><p>
+<h2>Shear</h2>
+</p><p>
+Except actually, <code>rl.DrawTexturePro</code> doesn't cover all the cases we need. The problem is that is always draws the texture as a rectangle, which is usually good enough but breaks once transform hierarchies are added to the mix.
+</p><p>
+The Transform struct allows a position, rotation and scale, relative to either global coordinates or the coordinates of the object's parent. Even with all of those together, you still get a transformation which maps rectangles to rectangles, so a rectangular texture needs to get drawn as a rectangle on screen and <code>DrawTexturePro</code> works fine.
+</p><p>
+But if you have
+</p><p>
+1. a child object that is offset from its parent's position and also rotated by any non-multiple of 90 degrees, and 
+</p><p>
+2. a parent object that is scaled by different amounts in x and y
+</p><p>
+then the matrix you end up with for the child encodes a transformation with *shear*, meaning shapes passing through the transformation will end up skewed. In particular, a rectangle needs to be drawn as a parallelogram.
+</p><p>
+As it turns out, raylib doesn't have <i>any</i> draw texture functions that can handle this. So I needed to make my own, stepping down to raylib's lower-level wrapper over OpenGL, which is called <code>rlgl</code>. After porting raylib's source for <code>DrawTexturePro</code> from C and then adapting to take an arbitrary transform matrix, here's what I ended up with, should it prove useful in your own raylib project:
+</p><p>
+<pre><code>import rl "vendor:raylib"
+import rlgl "vendor:raylib/rlgl"
+@(rodata)
+SQUARE_CORNERS := [4]vec2 {
+    {0, 0}, //top left
+    {0, 1}, //bottom left
+    {1, 1}, //bottom right
+    {1, 0}, //top right
+}
+draw_texture_quad :: proc(texture: rl.Texture2D, source: Rect, transform: mat3, color: rl.Color) {
+    rlgl.Begin(rlgl.QUADS);defer rlgl.End()
+    rlgl.SetTexture(texture.id);defer rlgl.SetTexture(0)
+    rlgl.Color4ub(color.r, color.g, color.b, color.a)
+    world_corners: [4]vec2
+    #unroll for i in 0 ..< 4 {
+        world_corners[i] = world_to_screen(
+            mat_vec_mul(transform, SQUARE_CORNERS[i] * TEXTURE_PIXELS_PER_WORLD_UNIT),
+            cv,
+        )
+    }
+    tex_width := f64(texture.width)
+    tex_height := f64(texture.height)
+    tex_corners := [4]vec2 {
+        {source.x / tex_width, source.y / tex_height}, //top left
+        {source.x / tex_width, (source.y + source.height) / tex_height}, //bottom left
+        {(source.x + source.width) / tex_width, (source.y + source.height) / tex_height}, //bottom right
+        {(source.x + source.width) / tex_width, source.y / tex_height}, //top right
+    }
+    is_flipped_x := world_corners[3].x < world_corners[0].x
+    is_flipped_y := world_corners[1].y < world_corners[0].y
+    is_flipped := is_flipped_x ~ is_flipped_y //xor
+    #unroll for i in 0 ..< 4 {
+        index := i
+        if is_flipped {
+            index = 3 - i //reverse winding
+        }
+        rlgl.TexCoord2f(f32(tex_corners[index].x), f32(tex_corners[index].y))
+        rlgl.Vertex2f(f32(world_corners[index].x), f32(world_corners[index].y))
+    }
+}</code></pre>
+</p><p>
+Even with the increased flexibility isn't any more expensive to call than <code>rl.DrawTexturePro</code> and others, because those call the same <code>rlgl</code> functions the same number of times under the hood. In fact adding this made things faster because I no longer have to take the points output from the transformation and figure out what rotated/scaled rectangle fits the points, I just directly pass the points into the vertex buffer and let the GPU handle it as it's designed to do.
+</p><p>
+<h2>Spatial Partitioning</h2>
+</p><p>
+Many games want to simulate a physically larger game world than just one screen's worth of space, but most of the objects in the world are irrelevant most of the time because the player is nowhere near them. Once you need to simulate interactions which occur between <i>pairs</i> of nearby objects, notably collisions, the problem becomes compounded. Having some way of quickly narrowing down the objects and object pairs that are relevant to the simulation becomes necessary for performance on the scale of just a few hundred total objects.
+</p><p>
+The generic term for grouping objects which are close to each other is <i>spatial partitioning</i>, the most well-known example of which is the <i>quadtree</i> data structure (or <i>octree</i> for 3D simulations). There are many good explanations of quad-trees online, so I will just quickly summarize: you divide the overall list of objects into those belonging in each quadrant of the space. For any of the 4 resulting lists that are still longer than a provided maximum length, you recursively subdivide that quadrant along a halfway point. This gives you a tree structure where each level takes up just a quarter of the level above it, which means you can narrow down the list of objects near a given position (for some value of "near") in <i>O(log n)</i> steps where <i>n</i> is the number of total objects. There is a notable variation of this called a <i>k-d tree</i> where you split on the position of the median object along some axis rather than the spatial midpoint, with the intent of making the tree less lopsided because each level of recursion is guaranteed to split the remaining list exactly in half.
+</p><p>
+These are very pleasing data structures, but are also pretty involved to implement and overkill for me. One advantage of the quadtree is that it's scale-independent, meaning it will keep splitting space into finer and finer partitions as long as more detail is required, but only *where it's required* - it won't bother doing so in areas with few or no objects. Games which have a wide range of *densities* of objects benefit from this flexibility, like maybe if you have the player shrink to explore the tiny city in the corner of their room. But I know my game is going to stay at more or less the same level of zoom and objects per screen the whole time, so can I do something simpler given that knowledge? Yes!
+</p><p>
+The simpler solution I went with is to just use rectangular chunks of a fixed size in a grid layout. Think of this like using a flat array instead of a tree. To get the objects near a point, you index into the array by figuring out the id of whatever chunk the point falls into. That's a constant time lookup, even better than the <i>log(n)</i> tree traversal - but of course if you spawn a thousand objects in the same chunk, the fixed granularity means it will effectively not have any partitioning in place at all and performance will tank.
+</p><p>
+Since I want to have a game world where objects can get as far as they want from spawn and from each other, it isn't practical to use an *actual* (dense) array. Instead, I use a <code>map</code> to essentially model a sparse array of chunks:
+</p><p>
+<pre><code>ChunkId :: distinct [2]int
+Chunks :: map[ChunkId][dynamic]GameObjectHandle
+</code></pre>
+</p><p>
+For those unfamiliar with Odin syntax, this is defining <code>ChunkId</code> to be a type-distinct alias for an array of 2 <code>int</code>s, and <code>Chunks</code> to be a type alias for a <code>map</code> whose keys are <code>ChunkId</code> and whose values are <code>[dynamic]GameObjectHandle</code>, a growable list of the handle type discussed in <a href="posts/basic-gamedev#object-references">Object References</a>. The chunk map is keeping track of objects' chunk <i>membership</i> using handles, not holding the actual object data.
+</p><p>
+<h3>Annoying Details</h3>
+</p><p>
+Objects can move around including across chunk boundaries, so every frame we need to update the chunk membership for all the objects that moved. Counterintuitively, even though in all likelihood only a few objects change chunk membership each frame, I found that naively discarding rebuilding the entire chunk map from scratch was faster than my first approach of trying to only shuffle around the objects that moved. If this rebuilding becomes a performance problem later on, I will revisit to see if there is a better way of doing things. But for the moment, it is nowhere near the most expensive step.
+</p><p>
+Since objects in most games are solid shapes and not points, they can absolutely be in multiple chunks at the same time. This most commonly happens when an object is sitting at the edge or corner of a chunk, but it can also happen if an object is larger than the size of a chunk in either dimension. I want to be able to assert that two objects can only possibly be touching if they both appear in the same chunk, which means I must add an object's handle to the list for *all* the chunks it touches. This can lead to some double-counting edge cases where the same object or object pair is handled multiple times from the perspective of different chunks, and accounting for these cases is rather expensive compared to just looping over objects in all chunks.
+</p><p>
+<pre><code>objects_in_multiple_chunks: map[GameObjectHandle]struct {}</code></pre>
+</p><p>
+Luckily, I expect a pretty small fraction of all objects to be in multiple chunks, so alongside the chunk map I also maintain the set of objects which touch multiple chunks and then ignore the costly edge case handling logic unless the object is in this small set.
+</p><p>
+<h3>Uses</h3>
+</p><p>
+Now that we've done all this work making a chunk map, we can use it for several spatial-locality-based performance improvements.
+</p><p>
+In the renderer, we can stop ourselves from trying to draw offscreen objects by filtering to only objects in chunks which intersect the camera bounds.
+</p><p>
+In the collision system, we take advantage of the chunk membership property we enforce: collisions can only happen between objects in the same chunk. We can therefore iterate over chunks at the top level, and then pairs of objects within each chunk, rather than one giant doubly-nested loop over pairs of objects. Since this is an asymptotic improvement, it's the main performance benefit of using chunks.
+</p><p>
+In game-specific logic, we can define chunk loading / unloading procedures and reuse the same chunk system to get the "infinite world" effect seen in procedurally generated games.
+</p><p>
+<h2>Floating-point Precision</h2>
+</p><p>
+Floating-point numbers have a well-known shortcoming - they can represent numbers in a huge range, but as the numbers double in size the gap between adjacent representable numbers doubles as well. In older versions of Minecraft, the "Far Lands" are the weird glitchy landscape that happens when the player goes so far from spawn that these gaps between numbers become too big for the game's logic to work as intended.
+</p><p>
+I knew about this as a potential issue from the start, but it came up way sooner than I expected - tiny floating-point epsilons and stuff started to matter as soon as I added any sort of collision resolution. In fact I only needed to get a few thousand units away from spawn before I started clipping into walls due to loss of precision on collision checks.
+</p><p>
+There are a few fixes for this problem. Not very many episodes into his popular from-scratch game dev series Handmade Hero, Casey Muratori redefines positions from just a list of 2 floats to a chunk id (similar to ours, a pair of 2 ints identifying a chunk position) and a list of 2 floats specifying an offset from the chunk's center. He calls this construction "canonical coordinates" and goes on to "recanonicalize" the coordinates of objects when needed - if the object's offset puts it outside of the chunk represented by its chunk id, update the chunk id to the one it's actually in and the offset relative to that chunk position. This completely solves the precision issue by making it so that the canonical offset can't be in the floating point range where a meaningful amount of precision is lost.
+</p><p>
+I didn't feel like implementing canonical coordinates, so I took the lazy approach - just use 64-bit floats everywhere instead of 32-bit. At one point, this might have incurred a performance hit, but nowadays on 64-bit machines it's basically the same compute cost. This increases the precision by multiple orders of magnitude, enough for me to set my position many millions of units away from spawn and not see any difference in precision of movement or collision resolution. Good enough for me.
+</p><p>
+<h2>Animated Sprites</h2>
+</p><p>
+The key to this for me was unlearning a way of framing things I picked up in Unity, and just thinking through how I wanted to model it from scratch.
+</p><p>
+In Unity, a Sprite is one kind of display component a GameObject can have, and an Animation is another unrelated kind.
+</p><p>
+In my mind, I don't think of sprites and animations as two members of a more generic category of "display options". I think of animations as a layer built on top of basic sprites, just a system of defining when exactly to switch out one sprite for another or change some other parameter of the displayed image. We already have to clear and redraw the sprite every frame anyway, so it is negligible cost to add a little animation controller logic every frame determining whether to draw the same sprite or a different one this time.
+</p><p>
+Since it's fairly simple, this is what that looks like in code.
+</p><p>
+Recall that the <code>GameObject</code> struct has the fields
+</p><p>
+<pre><code>//...
+sprite: Sprite,
+animation: AnimationState,
+//...</code></pre>
+</p><p>
+<code>AnimationState</code> is defined like this:
+</p><p>
+<pre><code>//during the atlas build step, animation files are parsed into this format
+AtlasAnimation :: struct {
+    first_frame: TextureName,
+    last_frame: TextureName,
+    document_size: [2]f32,
+    loop_direction: TagLoopDir,
+    repeat: u16,
+}
+Animation :: struct {
+    using anim:      AtlasAnimation,
+    ticks_per_frame: uint, //how many ticks / frames should elapse before incrementing the frame of the animation?
+    loop:            bool, //should I keep playing after reaching end of playback?
+}
+PlaybackDirection :: enum {
+    backward = -1,
+    forward  = 1,
+}
+AnimationState :: struct {
+    anim:               Animation,
+    frame:              TextureName, //what frame should be displayed?
+    ticks_until_change: uint, //how many ticks of the game should elapse before switching to the next frame?
+    direction:          PlaybackDirection, //are we currently playing forward or backward?
+    paused:             bool,
+}</code></pre>
+</p><p>
+Every update, the animation controller looks over all objects that actually have a sprite and an animation, and for each one increments the animation state and sets sprite based on it:
+</p><p>
+<pre><code>increment_animation :: proc(sprite: ^Sprite, anim_state: ^AnimationState) {
+    if anim_state.paused {
+        return
+    }
+    anim_state.ticks_until_change -= 1
+    if anim_state.ticks_until_change > 0 {
+        //normal frame - continue as is
+        return
+    }
+    //need to increment animation frame
+    anim := anim_state.anim
+    new_frame: TextureName
+    switch anim.loop_direction {
+    case .Forward:
+        new_frame = anim_state.frame + TextureName(1)
+        if new_frame > anim.last_frame {
+            if !anim.loop {
+                anim_state.paused = true
+            }
+            new_frame = anim.first_frame
+        }
+    case .Ping_Pong, .Ping_Pong_Reverse:
+        at_start := anim_state.frame == anim.first_frame && anim_state.direction == .backward
+        at_end := (anim_state.frame == anim.last_frame && anim_state.direction == .forward)
+        if at_start || at_end {
+            anim_state.direction = -anim_state.direction
+        }
+        new_frame = anim_state.frame + TextureName(anim_state.direction)
+    case .Reverse:
+        new_frame = anim_state.frame - TextureName(1)
+        if new_frame < anim.first_frame {
+            if !anim.loop {
+                anim_state.paused = true
+            }
+            new_frame = anim.last_frame
+        }
+    }
+    anim_state.frame = new_frame
+    anim_state.ticks_until_change = anim.ticks_per_frame
+    sprite.texture = atlas_textures[new_frame]
+    return
+}</code></pre>
+</p><p>
+This is currently all the sophistication I need, but it won't be good enough forever. Eventually, I will need to build another system on top of animations for switching out animation states, just as animations are a system for switching out sprites. This is at a similar level to Unity's Animator Controller component, and will likely resemble those in that it will be a state machine triggering AnimationState changes on state transitions.
+</p><p>
+<h2>What Happened Last Frame?</h2>
+</p><p>
+There are some very good reasons we might want to keep around the data structures built up over the course of the last frame. The biggest ones are
+</p><p>
+1. we want to detect when things that last multiple frames start and stop so that gameplay code can react to them. Most common examples of this: player input (button pressed, held, released) and collisions.
+</p><p>
+2. we want to <i>reuse the memory</i> from previous frames rather than reallocating. Each frame will have approximately the same amount of data as the previous few, so if we have the memory from a previous frame to work with, it'll probably be about the right size for this frame's data and we won't need any new allocations.
+</p><p>
+Both of these problems are solved by <a href="https://en.wikipedia.org/wiki/Circular_buffer">ring buffers</a>. A ring buffer is a simple layer of indirection over any data structure which cycles through a list of pointers to instances of that data structure using an <code>increment</code> operation. When the end is reached, <code>increment</code> loops back around to the beginning, hence <i>"ring"</i>.
+</p><p>
+It's so simple in fact that I can just plop my whole generic Odin implementation here:
+</p><p>
+<pre><code>RingBuffer :: struct($T: typeid, $Size: int) {
+    items: [Size]^T,
+    idx:   uint, //index of current item
+}
+init :: proc(buf: ^RingBuffer($T, $Size)) {
+    for _, i in buf.items {
+        buf.items[i] = new(T)
+    }
+}
+increment :: proc(buf: ^RingBuffer($T, $Size), slots: int = 1) -> (prev, curr: ^T) {
+    prev = buf.items[buf.idx]
+    buf.idx = uint((int(buf.idx) + slots) %% len(buf.items))
+    curr = buf.items[buf.idx]
+    return
+}
+get_current :: proc(buf: ^RingBuffer($T, $Size)) -> ^T {
+    return buf.items[buf.idx]
+}
+set_current :: proc(buf: ^RingBuffer($T, $Size), t: ^T) {
+    buf.items[buf.idx] = t
+}
+get_prev :: proc(buf: ^RingBuffer($T, $Size), slots_ago: int = 1) -> ^T {
+    prev_idx := (int(buf.idx) - slots_ago) %% len(buf.items)
+    return buf.items[prev_idx]
+}</code></pre>
+</p><p>
+In my game, I have various data structures that are recreated every frame, so they fit the use case of a ring buffer. Because they all need to be refreshed on the same schedule, I toss them all into a struct, <code>GameFrameData</code>:
+</p><p>
+<pre><code>//aliases for long type names
+Collisions :: map[GameObjectHandle][dynamic]AABBCollision
+Chunks :: map[ChunkId][dynamic]GameObjectHandle
+GameObjectToChunks :: map[GameObjectHandle][dynamic]ChunkId
+GameFrameData :: struct {
+    chunks:                     Chunks, //keeps track of which objects are in which spatial regions
+    objects_in_multiple_chunks: GameObjectToChunks, //edge cases happen when objects are on edges or corners or just really big, this will let us know if we need to handle them
+    final_transforms:           [dynamic]mat3, //computed at the start of each frame and after collision resolution, holds local->world transforms for each object in objects, index matched
+    collisions:                 Collisions,
+}</code></pre>
+</p><p>
+These are then used in my Game struct as follows:
+<pre><code>import rb "ring_buffer"
+//...
+Game :: struct {
+    //...
+    using frame:           ^GameFrameData,
+    prev_frame:            ^GameFrameData,
+    frame_buffer:          rb.RingBuffer(GameFrameData, 2),
+    //...
+}</code></pre>
+</p><p>
+Throughout the frame, I can refer to e.g. <code>game.collisions</code> and <code>game.prev_frame.collisions</code> in update logic. At the end of every frame, I increment which element of the ring <code>frame</code> and <code>prev_frame</code> refer to:
+</p><p>
+<pre><code>//...
+if !game.paused {
+    game.frame_counter += 1
+    game.prev_frame, game.frame = rb.increment(&game.frame_buffer)
+}
+//...</code></pre>
+</p><p>
+In my case, I only need to refer to 1 frame in the past, so a size-2 ring buffer (also called a swap buffer) is used. But the code would still work if I were to use any number there.
+</p><p>
+<h2>Physics & Collisions</h2>
+</p><p>
+This one is a ridiculously deep rabbit hole, and I'll make a more thorough separate post about it eventually.
+</p><p>
+For now, the basic gist is this: efficient collision *detection* is relatively straightforward even for an extremely broad class of shapes, but physically realistic collision *resolution* is both way more complicated and way more shape-dependent. Both detection and resolution are unusually easy for axis-aligned bounding boxes in particular, and for that reason my game currently supports only AABBs as hitboxes. In future I might add circles, which are another easy case.
+</p><p>
+This might sound really limiting and for physics-focused games it absolutely is, but for most 2D games it's usually more important to just detect that a collision happened and invoke some custom logic to respond to it than it is for the collision response to look perfectly physical.
+</p><p>
+There's a huge exception to that rule: collisions with walls and other static level geometry. Not only do they feel way better to play when they look physical, but also preventing wall clipping is <i>usually</i> pretty mechanically important to say the least. For that reason object-wall collisions use continuous detection and resolution ("at what point during the last frame of movement did the object hit the wall?"), while all other collisions use discrete detection ("now that everything's moved, do these objects overlap?").
+</p><p>
+<h2>Game Loop Structure</h2>
+</p><p>
+So we have all these things we need to do each frame: render, build chunks, take player input, simulate physics, detect collisions, resolve collisions, run game-specific update logic, increment animations, clear buffers, the list goes on. 
+</p><p>
+Some of these things potentially step on each other's toes. For instance, if we were to render before resolving collisions we might render stuff in an overlapping state even though the resolution logic takes care of that right after. If we have custom hooks to respond to collision start and stop events, do we run that logic before or after the physics-based collision resolution? What if the custom hooks cause another collision to happen that was not detected in the initial collision detection pass? What is the right order to run these steps in and the right place to put the boundary between frames?
+</p><p>
+This is something that I have found a dearth of tutorials on, and I think that is probably because it's somewhat game-dependent what these systems even are and how they need to interact.
+</p><p>
+My main tip on structuring a game loop is therefore the same advice I would give about structuring any complex imperative program - to just think about what assumptions each piece of logic needs to make about the game state, and which systems enforce or mess up those invariants. For a given set of systems, it's a unique little puzzle to place them in an order satisfying their constraints.
+</p><p>
+For the systems I have and the way I intuitively think of the events in a frame, this is the structure that ended up working:
+</p><p>
+<pre><code>game_loop :: proc(game: ^Game) {
+    for !rl.WindowShouldClose() {
+        dt := f64(rl.GetFrameTime())
+        if rl.IsKeyPressed(rl.KeyboardKey.ESCAPE) {//toggle pause
+            game.paused = !game.paused
+        }
+        go := !game.paused || rl.IsKeyPressed(.GRAVE) //either game is playing or we are stepping through frame by frame
+        recreate_final_transforms(game) //need to know global positions of things during physics update
+        remake_chunks(game, dt) //update chunks
+        if go {
+            physics_update(game, dt) //updates positions based on physics info and sets game.frame.collisions
+            //at this point nothing will move until next frame so final_transforms will be correct for rendering
+            recreate_final_transforms(game)
+            increment_animations(game, dt) //update animation states
+            //assumption: game_update is not generally supposed to touch transform position directly or it'll mess up physics
+            //it is responsible for setting velocity, and setting position only if a sudden teleport is needed
+            game_update(game, dt) //game specific update
+            // new objects might have been added, or transforms edited directly
+            recreate_final_transforms(game)
+        }
+        render(game)
+        if go {
+            game.frame_counter += 1 //increment frame counter
+            game.prev_frame, game.frame = rb.increment(&game.frame_buffer) //increment the swap buffer
+        }
+        free_all(context.temp_allocator) //free memory for stuff tied to the lifetime of the frame
+    }
+}</code></pre>
+</p><p>
+<h2>Future Topics</h2>
+</p><p>
+I have some more things to talk about, but I am saving them for a future post because I don't have enough experience with them to have confidence in any particular technique or implementation.
+</p><p>
+<h3>More on Collisions</h3>
+</p><p>
+Adding collision detection & resolution is what makes a game world feel like a tangible and physical *place* to be interacted with rather than just a loose bunch of sprites moving around. It is absolutely one of the fundamental problems of game development. Unlike the other topics in this post, though, achieving even the most basic effect for collisions is still a pretty involved effort. For that reason, I want to save it for its own deep dive post.
+</p><p>
+<h3>Types of Game Objects</h3>
+</p><p>
+If you're modeling many different types of objects in the game world with heterogeneous data and functionality, how do you store that data if you're using just a big array of the same struct for your objects in a language that doesn't support OOP? How do you enforce that objects are "of a particular type" in your gameplay code?
+</p><p>
+I think I know a good pattern for this in Odin, but I'm waiting to pass judgment on it until it's battle-tested more by needing a bunch more types of object in the game.
+</p><p>
+<h3>State Machines</h3>
+</p><p>
+State machines are a famously useful abstraction in game development, used for enemy behaviors, boss fights, animation transitions, and menuing & UI. As of writing this post, I still haven't implemented one for my game, but finding a good pattern for them is my next big priority.
+</p><p>
+</div>
+  </div>
+</body>
+
+</html>
